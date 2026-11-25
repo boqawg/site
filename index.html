@@ -1,99 +1,473 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+ <head>
   <meta charset="UTF-8">
-  <title>العيادة الطبية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabinet de Gynécologie & Obstétrique | Style Italien Modern</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <!-- Italian High-End Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: #faf9f6; color: #2c3e50; line-height: 1.6; }
-    .hidden { display: none !important; }
+    :root {
+      --bg-cream: #FDFBF7;
+      --bg-cream-dark: #F3EFE6;
+      --text-main: #2C3531;
+      --pastel-pink: #E8C5C8;
+      --pastel-pink-light: #FBF0F1;
+      --pastel-pink-hover: #DDA8AC;
+      --border-line: #E2DACD;
+    }
     
-    .btn { background: #b49655; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    .btn:hover { background: #89660e; }
-    
-    header { padding: 40px 8%; display: flex; justify-content: space-between; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
-    h1 { font-size: 2rem; color: #1a252f; margin-bottom: 10px; }
+    body { 
+      background-color: var(--bg-cream); 
+      color: var(--text-main); 
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    section { padding: 40px 8%; display: flex; justify-content: center; }
-    .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 450px; text-align: center; }
-    input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%; margin-bottom: 12px; }
+    .font-italian {
+      font-family: 'Cormorant Garamond', serif;
+    }
 
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-    .modal.is-open { display: flex; }
-    .modal-box { background: white; padding: 25px; border-radius: 10px; width: 100%; max-width: 400px; position: relative; }
-    .close { position: absolute; top: 10px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-    .step { display: none; }
-    .step.is-active { display: block; }
+    .glass-card {
+      background: rgba(253, 251, 247, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-line);
+    }
+
+    .service-card {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--pastel-pink-hover);
+      box-shadow: 0 20px 40px rgba(44, 53, 49, 0.05);
+    }
+
+    /* Modal Animation */
+    .modal-shell { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .modal-shell.is-open { opacity: 1; pointer-events: auto; }
+    .modal-card { transform: translateY(20px) scale(0.98); transition: transform 0.3s ease; }
+    .modal-shell.is-open .modal-card { transform: translateY(0) scale(1); }
+
+    .step-panel { display: none; }
+    .step-panel.is-active { display: block; animation: rise 0.4s ease-out both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    input, select { outline: none; }
+    input:focus, select:focus { border-color: var(--pastel-pink-hover); box-shadow: 0 0 0 3px rgba(232, 197, 200, 0.3); }
   </style>
-</head>
-<body>
+ </head>
 
-  <header>
-    <h2>عيادة الأمل</h2>
-    <button class="btn" onclick="toggleModal(true)">احجز موعداً</button>
-  </header>
+ <body class="w-full min-h-screen antialiased selection:bg-[#E8C5C8] selection:text-[#2C3531]">
 
-  <main style="padding: 40px 8%; text-align: center;">
-    <h1>رعاية متكاملة لصحتكِ</h1>
-    <p style="color: #666; margin-bottom: 20px;">نرافقكِ بأحدث التقنيات الطبية.</p>
-    <button class="btn" onclick="toggleModal(true)">حجز استشارة</button>
-  </main>
-
-  <section>
-    <div class="card">
-      <h3>حاسبة موعد الولادة</h3>
-      <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">أدخلي تاريخ أول يوم من آخر دورة:</p>
-      <input type="date" id="lastPeriod">
-      <button class="btn" style="width:100%" onclick="calc()">احسبي الآن</button>
-      <div id="calcResult" class="hidden" style="margin-top: 15px; padding: 10px; background: #f3efe6; border-radius: 6px; color: #89660e;">
-        الموعد المتوقع: <strong id="dueDateText"></strong>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modal -->
-  <div id="bookingModal" class="modal">
-    <div class="modal-box">
-      <button class="close" onclick="toggleModal(false)">&times;</button>
-      <h3 style="margin-bottom: 15px; color: #89660e;">حجز موعد</h3>
-      
-      <form id="form" onsubmit="event.preventDefault(); document.getElementById('form').classList.add('hidden'); document.getElementById('success').classList.remove('hidden');">
-        <div class="step is-active" id="step1">
-          <input type="text" placeholder="الاسم الكامل" required>
-          <input type="tel" placeholder="رقم الهاتف" required>
-          <button type="button" class="btn" style="width:100%" onclick="setStep(2)">التالي</button>
-        </div>
-        <div class="step" id="step2">
-          <select><option>متابعة حمل</option><option>استشارة عامة</option></select>
-          <input type="date" required>
-          <div style="display:flex; gap:10px;">
-            <button type="button" class="btn" style="background:#ccc; color:#000; width:50%" onclick="setStep(1)">رجوع</button>
-            <button type="submit" class="btn" style="width:50%">تأكيد</button>
-          </div>
-        </div>
-      </form>
-
-      <div id="success" class="hidden" style="text-align:center; padding: 20px 0;">
-        <h4>تم الاستلام بنجاح!</h4>
-        <button class="btn" style="margin-top:15px; width:100%" onclick="toggleModal(false)">إغلاق</button>
-      </div>
-    </div>
+  <!-- Top Announcement Bar -->
+  <div class="w-full bg-[#2C3531] text-[#FDFBF7] py-2.5 px-6 text-xs flex justify-between items-center tracking-wider">
+   <div class="flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-[#E8C5C8] animate-pulse"></span>
+    <span class="font-medium text-[11px] uppercase tracking-widest">Kharouba. Alger • Cabinet Médical de Haute Précision</span>
+   </div>
+   <div class="hidden sm:flex items-center gap-6 text-[11px] text-[#E2DACD]">
+    <span><i data-lucide="phone" class="w-3 h-3 inline mr-1 text-[#E8C5C8]"></i> +33 1 42 68 55 00</span>
+    <span><i data-lucide="clock" class="w-3 h-3 inline mr-1 text-[#E8C5C8]"></i> Lun - Ven: 08:30 - 18:30</span>
+   </div>
   </div>
 
+  <!-- Header / Navigation -->
+  <header class="w-full border-b border-[#E2DACD] bg-[#FDFBF7]/90 sticky top-0 z-40 backdrop-blur-md">
+   <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3 group">
+     <div class="w-10 h-10 rounded-full bg-[#FBF0F1] border border-[#E8C5C8] flex items-center justify-center text-[#2C3531] group-hover:bg-[#E8C5C8] transition-all">
+      <i data-lucide="heart-pulse" class="w-5 h-5 text-[#2C3531]"></i>
+     </div>
+     <div class="flex flex-col">
+      <span class="font-italian font-bold text-2xl tracking-wider text-[#2C3531]">Dr. H</span>
+      <span class="text-[9px] tracking-[0.2em] uppercase text-[#7A8A82]">Gynécologie & Obstétrique</span>
+     </div>
+    </a>
+    
+    <div class="hidden md:flex items-center gap-8 text-xs uppercase tracking-widest font-medium text-[#2C3531]/80">
+     <a class="hover:text-[#DDA8AC] transition-colors" href="#about">Le Cabinet</a>
+     <a class="hover:text-[#DDA8AC] transition-colors" href="#services">Expertises</a>
+     <a class="hover:text-[#DDA8AC] transition-colors" href="#calculator">Calculateur</a>
+     <a class="hover:text-[#DDA8AC] transition-colors" href="#faq">Informations</a>
+    </div>
+
+    <button type="button" data-modal-open class="bg-[#2C3531] text-[#FDFBF7] rounded-full px-6 py-3 font-semibold text-xs tracking-wider uppercase hover:bg-[#E8C5C8] hover:text-[#2C3531] transition-all duration-300 shadow-sm">
+     Prendre Rendez-vous
+    </button>
+   </nav>
+  </header>
+
+  <main>
+   <!-- Hero Section -->
+   <section class="w-full min-h-[85vh] flex items-center border-b border-[#E2DACD] bg-[#F3EFE6] relative overflow-hidden py-16">
+    <!-- Subtle Italian Aesthetic Grid Background -->
+    <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#E8C5C8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-center relative z-10">
+     <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 rounded-full border border-[#E8C5C8] bg-[#FBF0F1] px-4 py-1.5 text-xs font-semibold text-[#2C3531] uppercase tracking-wider mb-6">
+       <span class="w-2 h-2 rounded-full bg-[#E8C5C8]"></span> L'élégance du soin au féminin
+      </div>
+      
+      <h1 class="font-italian text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.08] text-[#2C3531]">
+       Une médecine gynécologique <br>
+       <span class="italic font-normal text-[#DDA8AC]">douce, moderne et personnalisée.</span>
+      </h1>
+      
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-[#2C3531]/80 font-normal">
+       Alliant rigueur scientifique italienne et écoute bienveillante. Un suivi gynécologique et obstétrical sur-mesure à chaque étape de la vie de la femme.
+      </p>
+      
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+       <button type="button" data-modal-open class="bg-[#2C3531] text-[#FDFBF7] rounded-full px-8 py-4 font-bold text-xs uppercase tracking-wider hover:bg-[#E8C5C8] hover:text-[#2C3531] transition-all shadow-lg">
+        <i data-lucide="calendar" class="w-4 h-4 inline mr-2"></i> Réserver une consultation
+       </button>
+       
+       <a href="#services" class="rounded-full border border-[#2C3531] bg-transparent px-8 py-4 font-semibold text-xs uppercase tracking-wider text-[#2C3531] hover:bg-[#2C3531] hover:text-[#FDFBF7] transition-all">
+        Découvrir le suivi
+       </a>
+      </div>
+
+      <!-- Quick Highlights -->
+      <div class="mt-12 pt-8 border-t border-[#E2DACD] grid grid-cols-3 gap-6">
+       <div>
+        <p class="font-italian text-2xl font-bold text-[#2C3531]">15+ Ans</p>
+        <p class="text-xs text-[#7A8A82] uppercase tracking-wider mt-1">D'expertise médicale</p>
+       </div>
+       <div>
+        <p class="font-italian text-2xl font-bold text-[#2C3531]">Échographie 4D</p>
+        <p class="text-xs text-[#7A8A82] uppercase tracking-wider mt-1">Haute définition</p>
+       </div>
+       <div>
+        <p class="font-italian text-2xl font-bold text-[#2C3531]">Suivi Doux</p>
+        <p class="text-xs text-[#7A8A82] uppercase tracking-wider mt-1">Approche holistique</p>
+       </div>
+      </div>
+     </div>
+
+     <!-- Right Visual / Floating Interactive Preview Card -->
+     <div class="lg:col-span-5">
+      <div class="relative rounded-[2.5rem] overflow-hidden border-8 border-[#FDFBF7] shadow-2xl bg-[#FDFBF7]">
+       <!-- Doctor Photo Placeholder -->
+       <img src="IMG_1284.jpeg" alt="Dr. Giulia Rossi" class="w-full h-[500px] object-cover">
+       
+       <!-- Floating Card 1 -->
+       <div class="absolute top-6 left-6 glass-card p-4 rounded-2xl max-w-xs shadow-lg flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-[#E8C5C8]/40 flex items-center justify-center text-[#2C3531] shrink-0">
+         <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+         <p class="text-xs font-bold text-[#2C3531]">Suivi de Grossesse</p>
+         <p class="text-[11px] text-gray-600">Maternité & Périnatalité</p>
+        </div>
+       </div>
+
+       <!-- Floating Card 2 -->
+       <div class="absolute bottom-6 left-6 right-6 glass-card p-5 rounded-2xl shadow-xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+         <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+         <div>
+          <p class="text-xs font-bold text-[#2C3531]">Consultations Ouvertes</p>
+          <p class="text-[11px] text-gray-600">Rendez-vous disponibles cette semaine</p>
+         </div>
+        </div>
+        <button data-modal-open class="text-xs font-bold bg-[#E8C5C8] text-[#2C3531] px-4 py-2 rounded-full hover:bg-[#2C3531] hover:text-[#FDFBF7] transition-all">Réserver</button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- Services Section -->
+   <section id="services" class="w-full py-24 bg-[#FDFBF7]">
+    <div class="max-w-7xl mx-auto px-6">
+     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+      <div>
+       <span class="text-xs font-bold uppercase tracking-widest text-[#DDA8AC]">Champs d'expertise</span>
+       <h2 class="font-italian text-4xl sm:text-5xl font-light text-[#2C3531] mt-2">Un accompagnement global & spécialisé</h2>
+      </div>
+      <p class="max-w-md text-sm text-[#2C3531]/70 leading-relaxed font-normal">
+       Chaque consultation est pensée pour vous offrir confort, sécurité médicale et une écoute attentive sans jugement.
+      </p>
+     </div>
+
+     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Service 1 -->
+      <article class="service-card rounded-[2rem] p-8 bg-[#FDFBF7] border border-[#E2DACD] flex flex-col justify-between">
+       <div>
+        <div class="w-12 h-12 rounded-2xl bg-[#FBF0F1] text-[#2C3531] flex items-center justify-center mb-6">
+         <i data-lucide="baby" class="w-6 h-6 text-[#DDA8AC]"></i>
+        </div>
+        <h3 class="font-italian font-bold text-2xl text-[#2C3531]">Suivi d'Obstétrique & Grossesse</h3>
+        <p class="text-xs leading-relaxed mt-3 text-gray-600">Accompagnement mensuel, suivi prénatal complet, préparation à l'accouchement et consultations post-natales.</p>
+       </div>
+       <div class="mt-8 pt-4 border-t border-[#E2DACD] flex items-center justify-between">
+        <span class="text-xs font-bold text-[#DDA8AC]">Durée : 45 min</span>
+        <button data-modal-open class="text-xs font-bold text-[#2C3531] hover:text-[#DDA8AC]">Prendre RDV <i data-lucide="chevron-right" class="w-3.5 h-3.5 inline"></i></button>
+       </div>
+      </article>
+
+      <!-- Service 2 -->
+      <article class="service-card rounded-[2rem] p-8 bg-[#FDFBF7] border border-[#E2DACD] flex flex-col justify-between">
+       <div>
+        <div class="w-12 h-12 rounded-2xl bg-[#FBF0F1] text-[#2C3531] flex items-center justify-center mb-6">
+         <i data-lucide="activity" class="w-6 h-6 text-[#DDA8AC]"></i>
+        </div>
+        <h3 class="font-italian font-bold text-2xl text-[#2C3531]">Échographie 3D / 4D Morphologique</h3>
+        <p class="text-xs leading-relaxed mt-3 text-gray-600">Échographies gynécologiques et obstétricales de haute précision avec matériel de dernière génération.</p>
+       </div>
+       <div class="mt-8 pt-4 border-t border-[#E2DACD] flex items-center justify-between">
+        <span class="text-xs font-bold text-[#DDA8AC]">Durée : 30 min</span>
+        <button data-modal-open class="text-xs font-bold text-[#2C3531] hover:text-[#DDA8AC]">Prendre RDV <i data-lucide="chevron-right" class="w-3.5 h-3.5 inline"></i></button>
+       </div>
+      </article>
+
+      <!-- Service 3 -->
+      <article class="service-card rounded-[2rem] p-8 bg-[#FDFBF7] border border-[#E2DACD] flex flex-col justify-between">
+       <div>
+        <div class="w-12 h-12 rounded-2xl bg-[#FBF0F1] text-[#2C3531] flex items-center justify-center mb-6">
+         <i data-lucide="shield-check" class="w-6 h-6 text-[#DDA8AC]"></i>
+        </div>
+        <h3 class="font-italian font-bold text-2xl text-[#2C3531]">Gynécologie Médicale & Suivi Annuels</h3>
+        <p class="text-xs leading-relaxed mt-3 text-gray-600">Bilan annuel de prévention, frottis, contraception, suivi de la ménopausée et dépistages réguliers.</p>
+       </div>
+       <div class="mt-8 pt-4 border-t border-[#E2DACD] flex items-center justify-between">
+        <span class="text-xs font-bold text-[#DDA8AC]">Durée : 30 min</span>
+        <button data-modal-open class="text-xs font-bold text-[#2C3531] hover:text-[#DDA8AC]">Prendre RDV <i data-lucide="chevron-right" class="w-3.5 h-3.5 inline"></i></button>
+       </div>
+      </article>
+     </div>
+    </div>
+   </section>
+
+   <!-- Interactive Pregnancy Calculator Feature (Modern Tech Feature) -->
+   <section id="calculator" class="w-full py-20 bg-[#F3EFE6] border-y border-[#E2DACD]">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+     <div class="w-12 h-12 rounded-full bg-[#E8C5C8]/30 flex items-center justify-center mx-auto mb-4 text-[#2C3531]">
+      <i data-lucide="calculator" class="w-6 h-6"></i>
+     </div>
+     <span class="text-xs font-bold uppercase tracking-widest text-[#DDA8AC]">Outil Interactif</span>
+     <h2 class="font-italian text-3xl sm:text-4xl text-[#2C3531] mt-2">Calculateur de Terme de Grossesse</h2>
+     <p class="text-xs text-gray-600 mt-2 max-w-lg mx-auto">Saisissez la date de vos dernières règles pour estimer votre date présumée d'accouchement et programmer vos échographies.</p>
+
+     <div class="mt-8 p-8 bg-[#FDFBF7] rounded-[2rem] border border-[#E2DACD] shadow-sm max-w-xl mx-auto text-left">
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2" for="lastPeriod">Date du premier jour des dernières règles</label>
+      <div class="flex gap-3">
+       <input type="date" id="lastPeriod" class="w-full bg-[#F3EFE6] border border-[#E2DACD] rounded-xl px-4 py-3 text-sm text-[#2C3531]">
+       <button type="button" onclick="calculateDueDate()" class="bg-[#2C3531] text-[#FDFBF7] font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-[#E8C5C8] hover:text-[#2C3531] transition-all">Calculer</button>
+      </div>
+
+      <div id="calcResult" class="hidden mt-6 p-4 rounded-xl bg-[#FBF0F1] border border-[#E8C5C8] text-center">
+       <p class="text-xs text-gray-600 uppercase tracking-wider">Date présumée d'accouchement (DPA) :</p>
+       <p id="dueDateText" class="font-italian font-bold text-2xl text-[#2C3531] mt-1"></p>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- Patient Reviews Section -->
+   <section class="w-full py-24 bg-[#FDFBF7]">
+    <div class="max-w-7xl mx-auto px-6">
+     <div class="text-center max-w-xl mx-auto mb-16">
+      <span class="text-xs font-bold uppercase tracking-widest text-[#DDA8AC]">Témoignages</span>
+      <h2 class="font-italian text-4xl font-light text-[#2C3531] mt-2">La confiance de nos patientes</h2>
+     </div>
+
+     <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-[#F3EFE6] p-8 rounded-[2rem] border border-[#E2DACD]">
+       <div class="flex items-center gap-1 text-[#DDA8AC] mb-4">
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+       </div>
+       <p class="font-italian text-lg italic text-[#2C3531] leading-relaxed">"Une écoute rare et d'une douceur exceptionnelle. Le Dr Rossi a suivi ma grossesse avec tellement de bienveillance. Le cabinet est magnifique et apaisant."</p>
+       <p class="text-xs font-bold text-[#2C3531] uppercase tracking-wider mt-6">• Marie L. (Suivi Maternité)</p>
+      </div>
+
+      <div class="bg-[#F3EFE6] p-8 rounded-[2rem] border border-[#E2DACD]">
+       <div class="flex items-center gap-1 text-[#DDA8AC] mb-4">
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+       </div>
+       <p class="font-italian text-lg italic text-[#2C3531] leading-relaxed">"Enfin une gynécologue qui prend le temps d'expliquer chaque acte avec pédagogie. Matériel très moderne et environnement d'une grande propreté."</p>
+       <p class="text-xs font-bold text-[#2C3531] uppercase tracking-wider mt-6">• Sophie T. (Consultation de Routine)</p>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-[#2C3531] text-[#FDFBF7] py-12 border-t border-[#E2DACD]/20">
+   <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6 text-xs">
+    <div class="flex items-center gap-3">
+     <span class="font-italian font-bold text-xl text-[#FDFBF7]">Dr. Otsmane H</span>
+     <span class="text-gray-500">|</span>
+     <span class="text-[#E2DACD]">Cabinet de Gynécologie & Obstétrique © 2026</span>
+    </div>
+    <div class="flex items-center gap-6 text-[#E2DACD]">
+     <span>• Alger</span>
+     <span>• Kharouba, Alger</span>
+    </div>
+   </div>
+  </footer>
+
+  <!-- Booking Modal (Multi-step Appointment System in French) -->
+  <div id="bookingModal" class="modal-shell fixed inset-0 z-50 bg-[#2C3531]/80 p-4 flex items-center justify-center backdrop-blur-sm" role="dialog" aria-modal="true">
+   <div class="modal-card w-full max-w-lg rounded-[2.5rem] bg-[#FDFBF7] shadow-2xl overflow-hidden border border-[#E2DACD]">
+    
+    <!-- Modal Header -->
+    <div class="p-6 border-b border-[#E2DACD] flex items-start justify-between bg-[#F3EFE6]">
+     <div>
+      <p class="text-xs font-bold text-[#DDA8AC] uppercase tracking-wider">Réservation en ligne</p>
+      <h2 class="font-italian font-bold text-xl text-[#2C3531] mt-0.5">Prendre Rendez-vous</h2>
+     </div>
+     <button id="modalClose" type="button" class="w-9 h-9 rounded-full border border-[#E2DACD] bg-white flex items-center justify-center text-[#2C3531] hover:bg-[#2C3531] hover:text-[#FDFBF7] transition-colors">✕</button>
+    </div>
+
+    <!-- Booking Form -->
+    <form id="bookingForm" class="p-8">
+     <!-- STEP 1: Service Selection -->
+     <section class="step-panel is-active" data-step="1">
+      <h3 class="font-bold text-[#2C3531] text-sm uppercase tracking-wider">1. Motif de consultation</h3>
+      
+      <label class="block text-xs font-bold uppercase tracking-wider mt-4 mb-2 text-gray-600" for="consultationType">Type de soin</label> 
+      <select id="consultationType" required class="w-full bg-white border border-[#E2DACD] rounded-xl px-4 py-3 text-sm text-[#2C3531]"> 
+       <option value="Grossesse">Suivi de Grossesse & Maternité</option> 
+       <option value="Echographie">Échographie Gynécologique / T1-T2-T3</option> 
+       <option value="Routine">Gynécologie Médicale & Bilan Annuel</option> 
+       <option value="Contraception">Consultation Contraception / Pose DIU</option> 
+      </select>
+
+      <button type="button" data-next class="mt-8 w-full bg-[#2C3531] text-[#FDFBF7] rounded-xl py-3.5 font-bold text-xs uppercase tracking-wider hover:bg-[#E8C5C8] hover:text-[#2C3531] transition-all">Étape Suivante</button>
+     </section>
+
+     <!-- STEP 2: Patient Info & Date -->
+     <section class="step-panel" data-step="2">
+      <h3 class="font-bold text-[#2C3531] text-sm uppercase tracking-wider">2. Coordonnées & Date</h3>
+      
+      <label class="block text-xs font-bold uppercase tracking-wider mt-4 mb-1 text-gray-600" for="patientName">Nom & Prénom</label> 
+      <input id="patientName" required type="text" placeholder="ex. Marie Dupont" class="w-full bg-white border border-[#E2DACD] rounded-xl px-4 py-3 text-sm"> 
+      
+      <label class="block text-xs font-bold uppercase tracking-wider mt-3 mb-1 text-gray-600" for="patientPhone">Numéro de Téléphone</label> 
+      <input id="patientPhone" required type="tel" placeholder="+33 6 00 00 00 00" class="w-full bg-white border border-[#E2DACD] rounded-xl px-4 py-3 text-sm">
+      
+      <div class="grid grid-cols-2 gap-4 mt-3">
+       <div>
+        <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600" for="appointmentDate">Date souhaitée</label> 
+        <input id="appointmentDate" required type="date" class="w-full bg-white border border-[#E2DACD] rounded-xl px-3 py-3 text-sm">
+       </div>
+       <div>
+        <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-600" for="appointmentTime">Horaire</label> 
+        <select id="appointmentTime" required class="w-full bg-white border border-[#E2DACD] rounded-xl px-3 py-3 text-sm"> 
+         <option value="09:00">09:00 AM</option> 
+         <option value="11:30">11:30 AM</option> 
+         <option value="14:00">02:00 PM</option> 
+         <option value="16:30">04:30 PM</option> 
+        </select>
+       </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 gap-3">
+       <button type="button" data-back class="border border-[#2C3531] text-[#2C3531] rounded-xl py-3 font-bold text-xs uppercase">Retour</button> 
+       <button type="submit" class="bg-[#2C3531] text-[#FDFBF7] rounded-xl py-3 font-bold text-xs uppercase hover:bg-[#E8C5C8] hover:text-[#2C3531]">Confirmer le RDV</button>
+      </div>
+     </section>
+
+     <!-- SUCCESS SCREEN -->
+     <section id="bookingSuccess" class="hidden text-center py-6">
+      <div class="w-12 h-12 rounded-full bg-[#FBF0F1] text-[#2C3531] flex items-center justify-center mx-auto mb-4 border border-[#E8C5C8]">
+       <i data-lucide="check" class="w-6 h-6 text-[#DDA8AC]"></i>
+      </div>
+      <h3 class="font-italian font-bold text-2xl text-[#2C3531]">Rendez-vous Confirmé !</h3>
+      <p class="text-xs text-gray-600 mt-2 leading-relaxed">Merci. Vous recevrez un SMS de confirmation avec les consignes d'accès au cabinet.</p>
+      <button type="button" id="successClose" class="bg-[#2C3531] text-[#FDFBF7] mt-6 rounded-xl px-8 py-3 font-bold text-xs uppercase">Fermer</button>
+     </section>
+    </form>
+   </div>
+  </div>
+
+  <!-- JavaScript Code -->
   <script>
-    const modal = document.getElementById("bookingModal");
-    const toggleModal = (open) => modal.classList.toggle("is-open", open);
-    const setStep = (n) => {
-      document.getElementById("step1").classList.toggle("is-active", n === 1);
-      document.getElementById("step2").classList.toggle("is-active", n === 2);
-    };
-    function calc() {
-      const val = document.getElementById("lastPeriod").value;
-      if (!val) return;
-      const date = new Date(new Date(val).getTime() + (280 * 86400000));
-      document.getElementById("dueDateText").innerText = date.toLocaleDateString('fr-FR');
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      // Modal Control
+      const modal = document.getElementById("bookingModal");
+      const form = document.getElementById("bookingForm");
+      const success = document.getElementById("bookingSuccess");
+      let step = 1;
+
+      const openModal = () => {
+        modal.classList.add("is-open");
+        form.reset();
+        success.classList.add("hidden");
+        form.classList.remove("hidden");
+        step = 1;
+        renderStep();
+      };
+
+      const closeModal = () => modal.classList.remove("is-open");
+
+      const renderStep = () => {
+        document.querySelectorAll(".step-panel").forEach(panel => {
+          panel.classList.toggle("is-active", Number(panel.dataset.step) === step);
+        });
+      };
+
+      document.querySelectorAll("[data-modal-open]").forEach(btn => btn.addEventListener("click", openModal));
+      document.getElementById("modalClose")?.addEventListener("click", closeModal);
+      document.getElementById("successClose")?.addEventListener("click", closeModal);
+
+      document.querySelectorAll("[data-next]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          step = 2;
+          renderStep();
+        });
+      });
+
+      document.querySelectorAll("[data-back]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          step = 1;
+          renderStep();
+        });
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        form.classList.add("hidden");
+        success.classList.remove("hidden");
+      });
+    });
+
+    // Pregnancy Calculator Logic
+    function calculateDueDate() {
+      const input = document.getElementById("lastPeriod").value;
+      if (!input) return;
+
+      const lastDate = new Date(input);
+      // Naegele's rule: Add 280 days (40 weeks)
+      const dueDate = new Date(lastDate.getTime() + (280 * 24 * 60 * 60 * 1000));
+      
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = dueDate.toLocaleDateString('fr-FR', options);
+
+      document.getElementById("dueDateText").innerText = formattedDate;
       document.getElementById("calcResult").classList.remove("hidden");
     }
   </script>
-</body>
+ </body>
 </html>
